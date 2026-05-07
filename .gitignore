@@ -1,3 +1,5 @@
+# .gitignore
+
 # envs
 venv/
 .venv/
