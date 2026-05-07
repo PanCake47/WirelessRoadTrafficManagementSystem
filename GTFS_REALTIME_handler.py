@@ -20,7 +20,7 @@ BASE_URL      = "https://api.um.warszawa.pl/api/action/busestrams_get/"
 TYPE_BUS  = 1
 TYPE_TRAM = 2
 
-PILOT_LAT      = 52.2317   # centrum Warszawy
+PILOT_LAT      = 52.2317
 PILOT_LON      = 21.0062
 PILOT_RADIUS_M = 1000
 
@@ -137,7 +137,7 @@ class WTPClient:
             print("  [!] Wszystkie próby nieudane — pomijam tę iterację")
             return []
 
-        # Ochrona przed odpowiedzią inną niż słownik (np. HTML strony błędu)
+        # Ochrona przed odpowiedzią inną niż słownik
         if not isinstance(data, dict):
             print(f"  [!] Nieoczekiwany format odpowiedzi API: {type(data).__name__}")
             return []
@@ -159,7 +159,6 @@ class WTPClient:
         buses = self.get_vehicles(TYPE_BUS)
         time.sleep(2)
         trams = self.get_vehicles(TYPE_TRAM)
-        # get_vehicles zawsze zwraca listę — sprawdzamy dodatkowo dla pewności
         if not isinstance(buses, list): buses = []
         if not isinstance(trams, list): trams = []
         for v in buses: v["_type"] = "autobus"
@@ -256,7 +255,7 @@ def build_brigade_index(gtfs: GTFSLoader) -> dict:
 
     active_trips = active_trips.merge(first_stop, on="trip_id", how="left")
 
-    # Grupuj: (route_id, brigade) → lista (first_departure, trip_id) posortowana czasowo
+    # Grupuj: (route_id, brigade) -> lista (first_departure, trip_id) posortowana czasowo
     index: dict[tuple, list] = {}
     for _, row in active_trips.iterrows():
         brigade = extract_brigade(row["trip_id"])
@@ -298,9 +297,9 @@ def find_active_trip(trips_for_brigade: list[tuple], now_sec: int) -> str | None
         except Exception:
             continue
         if dep_sec <= now_sec:
-            active = trip_id   # aktualizuj — chcemy ostatni który się zaczął
+            active = trip_id
         else:
-            break              # lista posortowana, dalsze kursy jeszcze nie startowały
+            break
     return active
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,25 @@
+# envs
+venv/
+.venv/
+.env
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# dane GTFS
+gtfs_data/
+
+# edytory
+.vscode/
+.idea/
+*.swp
+
+# misc
+/f-u905-lublin-latest.zip
+/plan.pdf
+/Projekt_Bezprzewodowy_System_Świateł_Jakub_Olszewski_287196.pdf
+/vehicles.pb

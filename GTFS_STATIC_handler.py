@@ -4,14 +4,14 @@ from datetime import datetime
 import pandas as pd
 
 # ---------------------------------------------------------------------------
-# Konfiguracja obszaru pilotażowego (centrum Warszawy)
+# Konfiguracja obszaru pilotażowego
 # ---------------------------------------------------------------------------
 
-PILOT_CENTER_LAT = 52.2317   # Rondo ONZ
+PILOT_CENTER_LAT = 52.2317
 PILOT_CENTER_LON = 21.0062
 PILOT_RADIUS_M   = 1000
 
-# Progi opóźnienia dla silnika priorytetu (w sekundach)
+# Progi opóźnienia dla silnika priorytetu
 DELAY_THRESHOLD_HARD = 180   # >= 3 min → priorytet HIGH
 DELAY_THRESHOLD_SOFT = 60    # >= 1 min → priorytet MEDIUM
 
@@ -20,7 +20,7 @@ DELAY_THRESHOLD_SOFT = 60    # >= 1 min → priorytet MEDIUM
 # ---------------------------------------------------------------------------
 
 def haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-    """Odległość w metrach między dwoma punktami GPS (wzór Haversine'a)."""
+    """Odległość w metrach między dwoma punktami GPS"""
     R = 6_371_000
     f1, f2 = math.radians(lat1), math.radians(lat2)
     df = math.radians(lat2 - lat1)
@@ -123,7 +123,7 @@ class PriorityEngine:
     Oblicza czy pojazd powinien otrzymać priorytet na skrzyżowaniu.
 
     Logika decyzyjna:
-        1. Oblicz odległość pojazdu od skrzyżowania (Haversine)
+        1. Oblicz odległość pojazdu od skrzyżowania
         2. Oblicz ETA na podstawie prędkości
         3. Oblicz opóźnienie względem rozkładu GTFS
         4. Przyznaj priorytet HIGH / MEDIUM lub odmów
@@ -149,12 +149,12 @@ class PriorityEngine:
         Zwraca decyzję o priorytecie dla konkretnego pojazdu.
 
         Args:
-            trip_id:            identyfikator kursu (z GTFS)
+            trip_id:            identyfikator kursu
             vehicle_lat/lon:    aktualna pozycja GPS pojazdu
             intersection_lat/lon: pozycja monitorowanego skrzyżowania
-            scheduled_arrival:  planowana godzina dotarcia HH:MM:SS (z stop_times)
+            scheduled_arrival:  planowana godzina dotarcia HH:MM:SS
             current_time:       bieżący czas HH:MM:SS
-            speed_kmh:          szacowana prędkość pojazdu (domyślnie 25 km/h)
+            speed_kmh:          szacowana prędkość pojazdu
 
         Returns:
             dict z kluczami:
@@ -216,7 +216,6 @@ def analyze_pilot_area(gtfs: GTFSLoader) -> dict:
     )
     print(f"\nPrzystanki w obszarze ({len(area_stops)}):")
     for _, row in area_stops.iterrows():
-        # street_name nie istnieje w warszawskim GTFS — pomijamy bezpiecznie
         street = getattr(row, "street_name", None) or "—"
         print(f"  [{row.stop_id}] {row.stop_name} ({street}) - {row.dist_m:.0f}m")
 
@@ -232,7 +231,7 @@ def analyze_pilot_area(gtfs: GTFSLoader) -> dict:
     print(f"\nLinie obsługujące obszar ({len(routes_in_area)}):")
     print(f"  {sorted(routes_in_area)}")
 
-    # Szczyty komunikacyjne — na podstawie dzisiejszych aktywnych kursów
+    # Szczyty komunikacyjne na podstawie dzisiejszych aktywnych kursów
     today = datetime.now().strftime("%Y%m%d")
     active_services = gtfs.calendar[
         (gtfs.calendar["date"] == today) &
