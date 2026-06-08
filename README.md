@@ -1,14 +1,30 @@
 # WirelessRoadTrafficManagementSystem
 Project for collage assigment.
 
-On start of the program, GTFS files are initialized and a crew index for the current day's trips is built. Then, a loop is executed:
+main.py - Application entry point.
+Responsible for startup: downloads newest GTFS data, loads it,
+builds the route index, initialises the API client,
+then hands off to the real-time monitoring loop.
 
-- The API returns the number of vehicles.
+config.py - Central configuration file.
+All settings like: API credentials, GTFS source, pilot area coordinates,
+intersections, priority thresholds, monitor interval are defined here.
 
-- The area filter limits the range to the center.
+gtfs_init.py - GTFS Static data initializer.
+Downloads the GTFS ZIP from https://gtfs.ztm.waw.pl/last, extracts it,
+and verifies if all required files are present.
 
-- For each vehicle, the system searches the index to determine which trips the crew on a given route is running today and what time each departs.
+gtfs_loader.py - GTFS Static data loader.
+Reads stops, routes, trips, stop_times and calendar from GTFS
+into DataFrames. Provides helpers for querying active services for today
+and finding the scheduled arrival time nearest to a given intersection.
 
-- Calculates the ETA (Estimated Time of Arrival) and delay.
+wtp_client.py - Real-time WTP Warsaw API client.
+Fetches live vehicle positions from https://api.um.warszawa.pl/api/action/busestrams_get/,
+converts the response to a DataFrame, and filters it to the pilot area.
 
-- If the delay and ETA exceed the specified thresholds, the system assigns HIGH or MEDIUM priority, depending on the threshold exceeded.
+monitor.py - Priority engine and real-time monitoring loop.
+Builds a time-based route index from GTFS,
+matches live vehicles to their most likely current trip, calculates delays,
+and decides whether to grant HIGH or MEDIUM intersection priority.
+Runs indefinitely, polling the API every POLL_INTERVAL seconds.
