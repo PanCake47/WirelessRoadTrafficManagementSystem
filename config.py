@@ -14,7 +14,7 @@ BASE_URL    = "https://api.um.warszawa.pl/api/action/busestrams_get/"
 GTFS_DOWNLOAD_URL = "https://gtfs.ztm.waw.pl/last"
 GTFS_DIR          = "./gtfs_data"
 
-# Obszar pilotażowy
+# Pilot area
 
 PILOT_LAT = 52.2317
 PILOT_LON = 21.0062

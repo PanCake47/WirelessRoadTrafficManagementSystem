@@ -26,43 +26,13 @@ python main.py
 ## How it works
 
 **Startup**
-1. GTFSInitializer   downloads and extracts the GTFS ZIP
-2. GTFSLoader reads  the GTFS files into memory (DataFrames)
-3. build_route_index builds a lookup table: line number -> list of trips sorted by departure time
-4. WTPClient         initialises the API session
+1. GTFSInitializer   downloads and extracts the GTFS files
+2. GTFSLoader        reads the GTFS files
+3. build_route_index builds a lookup table
+4. WTPClient         initialize API session
 
 **Monitoring loop**
-1. fetch_area()        pulls all vehicle positions, filters to pilot area
-2. _find_trip()        match vehicle to its most likely current trip 
-3. scheduled_arrival() find planned arrival time at the nearest intersection stop
-4. check_priority()    compute delay and ETA, decide priority level print alert if priority is granted
-
-## Structure overview
-
-main.py - Application entry point.
-Responsible for startup: downloads newest GTFS data, loads it,
-builds the route index, initialises the API client,
-then hands off to the real-time monitoring loop.
-
-config.py - Central configuration file.
-All settings like: API credentials, GTFS source, pilot area coordinates,
-intersections, priority thresholds, monitor interval are defined here.
-
-gtfs_init.py - GTFS Static data initializer.
-Downloads the GTFS ZIP from https://gtfs.ztm.waw.pl/last, extracts it,
-and verifies if all required files are present.
-
-gtfs_loader.py - GTFS Static data loader.
-Reads stops, routes, trips, stop_times and calendar from GTFS
-into DataFrames. Provides helpers for querying active services for today
-and finding the scheduled arrival time nearest to a given intersection.
-
-wtp_client.py - Real-time WTP Warsaw API client.
-Fetches live vehicle positions from https://api.um.warszawa.pl/api/action/busestrams_get/,
-converts the response to a DataFrame, and filters it to the pilot area.
-
-monitor.py - Priority engine and real-time monitoring loop.
-Builds a time-based route index from GTFS,
-matches live vehicles to their most likely current trip, calculates delays,
-and decides whether to grant HIGH or MEDIUM intersection priority.
-Runs indefinitely, polling the API every POLL_INTERVAL seconds.
+1. fetch_area()        gathers all vehicle locations and filters them to the pilot area
+2. _find_trip()        match vehicle to its most likely current trip
+3. scheduled_arrival() find planned arrival at the nearest intersection stop
+4. check_priority()    compute delay and ETA to grant priority level
