@@ -1,5 +1,43 @@
 # WirelessRoadTrafficManagementSystem
-Project for collage assigment.
+
+## Quick start
+
+```bash
+
+# 1. Clone reposetory
+git clone link_to_repo
+
+# 2. Create venv
+python -m venv name_of_venv 
+
+# 3. Activate venv (diffrent for linux)
+.\name_of_venv\Scripts\activate
+
+# 2. Install requirements 
+pip install -r req.txt
+
+# 3. Create env and insert API key
+echo "WTP_APIKEY=your_key_here" > .env
+
+# 4. Run
+python main.py
+```
+
+## How it works
+
+**Startup**
+1. GTFSInitializer   downloads and extracts the GTFS ZIP
+2. GTFSLoader reads  the GTFS files into memory (DataFrames)
+3. build_route_index builds a lookup table: line number -> list of trips sorted by departure time
+4. WTPClient         initialises the API session
+
+**Monitoring loop**
+1. fetch_area()        pulls all vehicle positions, filters to pilot area
+2. _find_trip()        match vehicle to its most likely current trip 
+3. scheduled_arrival() find planned arrival time at the nearest intersection stop
+4. check_priority()    compute delay and ETA, decide priority level print alert if priority is granted
+
+## Structure overview
 
 main.py - Application entry point.
 Responsible for startup: downloads newest GTFS data, loads it,
